@@ -20,25 +20,17 @@ namespace Voice_Calculator
 {
     public partial class OutputPage : Form
     {
+        // Initialize a new instance of the SpeechSynthesizer to provide access to the functionality to the installed speech synthesis engine.
         SpeechSynthesizer ss = new SpeechSynthesizer();
+
+        // Initialize a new instance of the PromptBuilder to add a variety of content types
         PromptBuilder pb = new PromptBuilder();
+
+        // Initialize the speech recognizer.
         SpeechRecognitionEngine sre = new SpeechRecognitionEngine();
-      
-
-        // set up the recognizer
-        //_speechRecognizer = new SpeechRecognizer();
-        //_speechRecognizer.Enabled = false;
-        //_speechRecognizer.SpeechRecognized += new EventHandler<SpeechRecognizedEventArgs>(_speechRecognizer_SpeechRecognized);
-
-        // set up the command and control grammar
-        //Grammar commandGrammar = new Grammar(@"grammar.xml");
-        //commandGrammar.Name = "main command grammar";
-        //commandGrammar.Enabled = true;
-
-        // activate the command grammer
-        //_speechRecognizer.LoadGrammar(commandGrammar);
-
-        //_speechRecognizer.Enabled = true;
+     
+        // Method for form designer support
+        // Should not be modified
         public OutputPage()
         {
             InitializeComponent();
@@ -46,48 +38,59 @@ namespace Voice_Calculator
 
         private void OutputPage_Load(object sender, EventArgs e)
         {
+            // Sets the background color of the form
             this.BackColor = Color.FromArgb(100, 149, 237);
         }
-
-       /* private static Grammar CreateGrammarFromFile()
-        {
-            Grammar citiesGrammar = new Grammar(@"MathCommands.xml");
-            citiesGrammar.Name = "SRGS File Cities Grammar";
-            return citiesGrammar;
-        }
-       */
+        
+        // Method for the start button
         private void Startbtn_Click(object sender, EventArgs e)
         {
+            // Disale the start button and enable the stop button while the app is running
             Startbtn.Enabled = false;
             Stopbtn.Enabled = true;
 
-            Choices clist = new Choices(new string[] { "hi", "what's up", "what time is it", "chrome app", "thanks", "cancel" });
-
-            clist.Add(new string[] { "1 plus 4", "4 minus 2", "what is the current time", "open chrome", "thank you", "close" });
-            Grammar gr = new Grammar(new GrammarBuilder(clist));
-
+            // Initialize a new srgsdoc for the minus operator xml file
             SrgsDocument srgsdoc = new SrgsDocument(@"c:\Users\hp\Documents\minusCommands.xml");
-            //SrgsDocument srgsdoc_add = new SrgsDocument(@"MathCommands.xml");
-            //SrgsDocument srgsdoc = new SrgsDocument(@"c:\Users\hp\Documents\multiplyCommands.xml");
-            Grammar grammar = new Grammar(srgsdoc);
-            
 
+            // Initialize a new srgsdoc for the multiply operator xml file
+            SrgsDocument srgsdoc_1 = new SrgsDocument(@"c:\Users\hp\Documents\multiplyCommands.xml");
 
-            //Grammar  = new Grammar();
-            /*Grammar voiceActionsGrammar = new Grammar(new GrammarBuilder(@"c:\Users\hp\Documents\VoiceActions.xml"));
-            voiceActionsGrammar.Name = "SRGS File Voice Actions Grammar";*/
+            // Initialize a new srgsdoc for the addition operator xml file
+            SrgsDocument srgsdoc_2 = new SrgsDocument(@"c:\Users\hp\Documents\additionCommands.xml");
+
+            // Initialize a new srgsdoc for the division operator xml file
+            SrgsDocument srgsdoc_3 = new SrgsDocument(@"c:\Users\hp\Documents\divisionCommands.xml");
+
+            // Initialize a new grammar for the minus operator xml file
+            Grammar minusGrammar = new Grammar(srgsdoc);
+            // Initialize a new grammar for the multiply operator xml file
+            Grammar multiplyGrammar = new Grammar(srgsdoc_1);
+            // Initialize a new grammar for the minus operator xml file
+            Grammar additionGrammar = new Grammar(srgsdoc_2);
+            // Initialize a new grammar for the multiply operator xml file
+            Grammar divisionGrammar = new Grammar(srgsdoc_3);
 
             try
             {
-
+                // Request recognizer to pause to change its state
                 sre.RequestRecognizerUpdate();
+
+                // Initialize a handler for the SpeechRecognized event. 
                 sre.SpeechRecognized += sre_SpeechRecognized;
-                //sre.LoadGrammarAsync(new Grammar(new GrammarBuilder(new Choices(@"MathCommands.xml"))));
-                //voiceActionsGrammar.Enabled = true;
-                sre.LoadGrammar(grammar);
+
+                // Load multiply operation grammar
+                sre.LoadGrammar(multiplyGrammar);
+                // Load multiply operation grammar
+                sre.LoadGrammar(additionGrammar);
+                // Load multiply operation grammar
+                sre.LoadGrammar(minusGrammar);
+                // Load multiply operation grammar
+                sre.LoadGrammar(divisionGrammar);
+
+                // Configure the audio output
                 sre.SetInputToDefaultAudioDevice();
-                //sre.SpeechDetected += sre_SpeechDetected;
-                //sre.SpeechHypothesized += sre_SpeechHypothesized;
+
+                // Start asynchronous, ensures continuous speech recognition. 
                 sre.RecognizeAsync(RecognizeMode.Multiple);
             }
             catch (Exception ex)
@@ -101,20 +104,24 @@ namespace Voice_Calculator
             throw new NotImplementedException();
         }
 
+        // Method for recognizing input and displaying results
         private void sre_SpeechRecognized(object sender, SpeechRecognizedEventArgs e)
         {
+            // Store the user input in a string variable
             string inputVoice = e.Result.Text.ToString();
-            // Taking a string
-
+            
+            // Identify a separator for the input
             string[] separator = {" "};
 
-            // using the method
+            // Split the input
             string[] strlist = inputVoice.Split(separator,
                StringSplitOptions.RemoveEmptyEntries);
 
+            // Initialize the variables for the two operands
             int firstOperand;
             int secondOperand;
 
+            // Converts the operands from string to integer and returns the integer value
             bool firstParsable = int.TryParse(strlist[0], out firstOperand);
             bool secondParsable = int.TryParse(strlist[2], out secondOperand);
 
@@ -122,29 +129,38 @@ namespace Voice_Calculator
             {
                 switch (strlist[1])
                 {
+                    // Addition operation
                     case "plus":
                         int sum = firstOperand + secondOperand;
                         ss.SpeakAsync(inputVoice + "=" + sum);
+                        OutputBox.Text += firstOperand + "+" + secondOperand + "=" + sum + Environment.NewLine;
                         break;
+                    // Sutraction operation
                     case "minus":
                         int subtract = firstOperand - secondOperand;
                         ss.SpeakAsync(inputVoice + "=" + subtract);
+                        OutputBox.Text += firstOperand + "-" + secondOperand + "=" + subtract + Environment.NewLine;
                         break;
-                    case "divides":
+                    // Division operation
+                    case "over":
                         int divide = firstOperand / secondOperand;
                         ss.SpeakAsync(inputVoice + "=" + divide);
+                        OutputBox.Text += firstOperand + "/" + secondOperand + "=" + divide + Environment.NewLine;
                         break;
+                    // multiplication operation
                     case "times":
                         int multiply = firstOperand * secondOperand;
                         ss.SpeakAsync(inputVoice + "=" + multiply);
+                        OutputBox.Text += firstOperand + "*" + secondOperand + "=" + multiply + Environment.NewLine;
                         break;
                 }
             }
             
 
-            OutputBox.Text += e.Result.Text.ToString() + Environment.NewLine;
+            
         }
 
+        // Method for the stop button
         private void Stopbtn_Click(object sender, EventArgs e)
         {
             sre.RecognizeAsyncStop();
