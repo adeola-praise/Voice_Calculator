@@ -37,10 +37,11 @@
             // 
             this.OutputBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.OutputBox.Location = new System.Drawing.Point(12, 76);
+            this.OutputBox.Location = new System.Drawing.Point(12, 23);
             this.OutputBox.Multiline = true;
             this.OutputBox.Name = "OutputBox";
-            this.OutputBox.Size = new System.Drawing.Size(490, 121);
+            this.OutputBox.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
+            this.OutputBox.Size = new System.Drawing.Size(490, 199);
             this.OutputBox.TabIndex = 0;
             // 
             // Startbtn

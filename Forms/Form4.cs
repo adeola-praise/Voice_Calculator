@@ -28,7 +28,11 @@ namespace Voice_Calculator
 
         // Initialize the speech recognizer.
         SpeechRecognitionEngine sre = new SpeechRecognitionEngine();
-     
+
+        // Initialize the variables for the two operands
+        int firstOperand;
+        int secondOperand;
+
         // Method for form designer support
         // Should not be modified
         public OutputPage()
@@ -45,7 +49,7 @@ namespace Voice_Calculator
         // Method for the start button
         private void Startbtn_Click(object sender, EventArgs e)
         {
-            // Disale the start button and enable the stop button while the app is running
+            // Disable the start button and enable the stop button while the app is running
             Startbtn.Enabled = false;
             Stopbtn.Enabled = true;
 
@@ -63,10 +67,13 @@ namespace Voice_Calculator
 
             // Initialize a new grammar for the minus operator xml file
             Grammar minusGrammar = new Grammar(srgsdoc);
+
             // Initialize a new grammar for the multiply operator xml file
             Grammar multiplyGrammar = new Grammar(srgsdoc_1);
+
             // Initialize a new grammar for the minus operator xml file
             Grammar additionGrammar = new Grammar(srgsdoc_2);
+
             // Initialize a new grammar for the multiply operator xml file
             Grammar divisionGrammar = new Grammar(srgsdoc_3);
 
@@ -80,11 +87,14 @@ namespace Voice_Calculator
 
                 // Load multiply operation grammar
                 sre.LoadGrammar(multiplyGrammar);
-                // Load multiply operation grammar
+
+                // Load addition operation grammar
                 sre.LoadGrammar(additionGrammar);
-                // Load multiply operation grammar
+
+                // Load subtraction operation grammar
                 sre.LoadGrammar(minusGrammar);
-                // Load multiply operation grammar
+
+                // Load division operation grammar
                 sre.LoadGrammar(divisionGrammar);
 
                 // Configure the audio output
@@ -117,9 +127,6 @@ namespace Voice_Calculator
             string[] strlist = inputVoice.Split(separator,
                StringSplitOptions.RemoveEmptyEntries);
 
-            // Initialize the variables for the two operands
-            int firstOperand;
-            int secondOperand;
 
             // Converts the operands from string to integer and returns the integer value
             bool firstParsable = int.TryParse(strlist[0], out firstOperand);
@@ -135,19 +142,22 @@ namespace Voice_Calculator
                         ss.SpeakAsync(inputVoice + "=" + sum);
                         OutputBox.Text += firstOperand + "+" + secondOperand + "=" + sum + Environment.NewLine;
                         break;
-                    // Sutraction operation
+
+                    // Subtraction operation
                     case "minus":
                         int subtract = firstOperand - secondOperand;
                         ss.SpeakAsync(inputVoice + "=" + subtract);
                         OutputBox.Text += firstOperand + "-" + secondOperand + "=" + subtract + Environment.NewLine;
                         break;
+
                     // Division operation
                     case "over":
                         int divide = firstOperand / secondOperand;
                         ss.SpeakAsync(inputVoice + "=" + divide);
                         OutputBox.Text += firstOperand + "/" + secondOperand + "=" + divide + Environment.NewLine;
                         break;
-                    // multiplication operation
+
+                    // Multiplication operation
                     case "times":
                         int multiply = firstOperand * secondOperand;
                         ss.SpeakAsync(inputVoice + "=" + multiply);
@@ -155,8 +165,6 @@ namespace Voice_Calculator
                         break;
                 }
             }
-            
-
             
         }
 
@@ -167,5 +175,6 @@ namespace Voice_Calculator
             Startbtn.Enabled = true;
             Stopbtn.Enabled = false;
         }
+
     }
 }
